@@ -1,18 +1,18 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
-import '/flutter_flow/flutter_flow_util.dart';
+import 'package:w_o_s_p_schedule_part/backend/models/event.dart';
+
 import 'api_manager.dart';
 
 export 'api_manager.dart' show ApiCallResponse;
 
-const _kPrivateApiFunctionName = 'ffPrivateApiCall';
+const endpoint_url = "https://api.jsonbin.io/v3/qs/65b39b49dc746540189b6815";
 
 class GetScheduleCall {
   static Future<ApiCallResponse> call() async {
     return ApiManager.instance.makeApiCall(
       callName: 'getSchedule',
-      apiUrl: 'https://api.jsonbin.io/v3/qs/65b3775e1f5677401f25ddab',
+      apiUrl: endpoint_url,
       callType: ApiCallType.GET,
       headers: {},
       params: {},
@@ -24,11 +24,10 @@ class GetScheduleCall {
     );
   }
 
-  static List? scheduleItems(dynamic response) => getJsonField(
-        response,
-        r'''$.record.items''',
-        true,
-      ) as List?;
+  static Events? scheduleItems(ApiCallResponse response) {
+    Response jsonResponse = Response.fromJson(json.decode(response.response?.body ?? "")) ;
+    return jsonResponse.record;
+  }
 }
 
 class ApiPagingParams {

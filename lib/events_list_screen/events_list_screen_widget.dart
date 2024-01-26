@@ -1,3 +1,5 @@
+import 'package:w_o_s_p_schedule_part/backend/models/event.dart';
+
 import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -116,16 +118,15 @@ class _EventsListScreenWidgetState extends State<EventsListScreenWidget>
                       final listViewGetScheduleResponse = snapshot.data!;
                       return Builder(
                         builder: (context) {
-                          final event = GetScheduleCall.scheduleItems(
-                                listViewGetScheduleResponse.jsonBody,
-                              )?.toList() ??
-                              [];
+                          final Events? event = GetScheduleCall.scheduleItems(
+                                listViewGetScheduleResponse,
+                              );
                           return ListView.builder(
                             padding: EdgeInsets.zero,
                             scrollDirection: Axis.vertical,
-                            itemCount: event.length,
+                            itemCount: event?.items.length,
                             itemBuilder: (context, eventIndex) {
-                              final eventItem = event[eventIndex];
+                              final Event? eventItem = event?.items[eventIndex];
                               return Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 1.0),
@@ -138,13 +139,7 @@ class _EventsListScreenWidgetState extends State<EventsListScreenWidget>
                                     context.pushNamed(
                                       'EventDetailsScreen',
                                       queryParameters: {
-                                        'eventName': serializeParam(
-                                          getJsonField(
-                                            eventItem,
-                                            r'''$.name''',
-                                          ).toString(),
-                                          ParamType.String,
-                                        ),
+                                        'eventName': eventItem?.name
                                       }.withoutNulls,
                                     );
                                   },
@@ -183,10 +178,7 @@ class _EventsListScreenWidgetState extends State<EventsListScreenWidget>
                                                         AlignmentDirectional(
                                                             -1.0, 0.0),
                                                     child: Text(
-                                                      getJsonField(
-                                                        eventItem,
-                                                        r'''$.name''',
-                                                      ).toString(),
+                                                      eventItem?.name ?? "",
                                                       style:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -204,10 +196,7 @@ class _EventsListScreenWidgetState extends State<EventsListScreenWidget>
                                                     ),
                                                   ),
                                                   Text(
-                                                    getJsonField(
-                                                      eventItem,
-                                                      r'''$.location''',
-                                                    ).toString(),
+                                                   eventItem?.location ?? "",
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .labelMedium
@@ -240,7 +229,7 @@ class _EventsListScreenWidgetState extends State<EventsListScreenWidget>
                                                       AlignmentDirectional(
                                                           -1.0, 0.0),
                                                   child: Text(
-                                                    '11:30',
+                                                    eventItem?.from ?? "",
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .bodyMedium
@@ -260,7 +249,7 @@ class _EventsListScreenWidgetState extends State<EventsListScreenWidget>
                                                       AlignmentDirectional(
                                                           -1.0, 0.0),
                                                   child: Text(
-                                                    '12:30',
+                                                    eventItem?.to ?? "",
                                                     textAlign: TextAlign.center,
                                                     style: FlutterFlowTheme.of(
                                                             context)
