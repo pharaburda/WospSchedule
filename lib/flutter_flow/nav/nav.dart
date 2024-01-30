@@ -51,13 +51,19 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'EventsListScreen',
           path: '/eventsListScreen',
-          builder: (context, params) => EventsListScreenWidget(),
+          builder: (context, params) => EventsListScreenWidget(
+            dayName: params.getParam('dayName', ParamType.String),
+          ),
         ),
         FFRoute(
           name: 'EventDetailsScreen',
           path: '/eventDetailsScreen',
           builder: (context, params) => EventDetailsScreenWidget(
             eventName: params.getParam('eventName', ParamType.String),
+            eventDescription:
+                params.getParam('eventDescription', ParamType.String),
+            tagsList:
+                params.getParam<String>('tagsList', ParamType.String, true),
           ),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),

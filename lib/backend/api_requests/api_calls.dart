@@ -6,7 +6,7 @@ import 'api_manager.dart';
 
 export 'api_manager.dart' show ApiCallResponse;
 
-const endpoint_url = "https://api.jsonbin.io/v3/qs/65b39b49dc746540189b6815";
+const endpoint_url = "https://api.jsonbin.io/v3/qs/65b3c63fdc746540189b88d2";
 
 class GetScheduleCall {
   static Future<ApiCallResponse> call() async {

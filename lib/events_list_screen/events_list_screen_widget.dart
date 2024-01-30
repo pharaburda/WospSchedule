@@ -2,10 +2,12 @@ import 'package:w_o_s_p_schedule_part/backend/models/event.dart';
 
 import '/backend/api_requests/api_calls.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
+import '/flutter_flow/flutter_flow_choice_chips.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/flutter_flow/form_field_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +18,12 @@ import 'events_list_screen_model.dart';
 export 'events_list_screen_model.dart';
 
 class EventsListScreenWidget extends StatefulWidget {
-  const EventsListScreenWidget({super.key});
+  const EventsListScreenWidget({
+    super.key,
+    required this.dayName,
+  });
+
+  final String? dayName;
 
   @override
   State<EventsListScreenWidget> createState() => _EventsListScreenWidgetState();
@@ -60,7 +67,7 @@ class _EventsListScreenWidgetState extends State<EventsListScreenWidget>
         key: scaffoldKey,
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: FlutterFlowTheme.of(context).primary,
           automaticallyImplyLeading: false,
           leading: FlutterFlowIconButton(
             borderColor: Colors.transparent,
@@ -69,7 +76,7 @@ class _EventsListScreenWidgetState extends State<EventsListScreenWidget>
             buttonSize: 60.0,
             icon: Icon(
               Icons.arrow_back_rounded,
-              color: Color(0xFF14181B),
+              color: FlutterFlowTheme.of(context).secondaryBackground,
               size: 30.0,
             ),
             onPressed: () async {
@@ -78,14 +85,30 @@ class _EventsListScreenWidgetState extends State<EventsListScreenWidget>
           ),
           title: Text(
             '32 Final WOŚP',
+            textAlign: TextAlign.start,
             style: FlutterFlowTheme.of(context).headlineSmall.override(
                   fontFamily: 'Outfit',
-                  color: Color(0xFF14181B),
-                  fontSize: 24.0,
+                  color: FlutterFlowTheme.of(context).secondaryBackground,
                   fontWeight: FontWeight.normal,
                 ),
           ),
           actions: [],
+          flexibleSpace: FlexibleSpaceBar(
+            background: Align(
+              alignment: AlignmentDirectional(1.0, 0.0),
+              child: Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 12.0, 8.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Image.asset(
+                    'assets/images/WOSP.png',
+                    height: MediaQuery.sizeOf(context).height * 0.1,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+          ),
           centerTitle: false,
           elevation: 0.0,
         ),
@@ -95,9 +118,62 @@ class _EventsListScreenWidgetState extends State<EventsListScreenWidget>
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(12.0, 24.0, 12.0, 24.0),
+                child: FlutterFlowChoiceChips(
+                  options: [
+                    ChipData('Official'),
+                    ChipData('Unofficial'),
+                    ChipData('Koncert'),
+                    ChipData('Obiad'),
+                    ChipData('Przerwa')
+                  ],
+                  onChanged: (val) =>
+                      setState(() => _model.choiceChipsValues = val),
+                  selectedChipStyle: ChipStyle(
+                    backgroundColor: FlutterFlowTheme.of(context).secondary,
+                    textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                          fontFamily: 'Readex Pro',
+                          color: FlutterFlowTheme.of(context).primaryText,
+                        ),
+                    iconColor: FlutterFlowTheme.of(context).primaryText,
+                    iconSize: 18.0,
+                    elevation: 4.0,
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  unselectedChipStyle: ChipStyle(
+                    backgroundColor: FlutterFlowTheme.of(context).alternate,
+                    textStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                          fontFamily: 'Readex Pro',
+                          color: FlutterFlowTheme.of(context).secondaryText,
+                        ),
+                    iconColor: FlutterFlowTheme.of(context).secondaryText,
+                    iconSize: 18.0,
+                    elevation: 0.0,
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  chipSpacing: 12.0,
+                  rowSpacing: 12.0,
+                  multiselect: true,
+                  initialized: _model.choiceChipsValues != null,
+                  alignment: WrapAlignment.start,
+                  controller: _model.choiceChipsValueController ??=
+                      FormFieldController<List<String>>(
+                    [],
+                  ),
+                  wrapped: false,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 0.0, 12.0),
+                child: Text(
+                  'Dzień 1, 28.01.2023',
+                  style: FlutterFlowTheme.of(context).bodyLarge,
+                ),
+              ),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(8.0, 8.0, 8.0, 0.0),
+                  padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                   child: FutureBuilder<ApiCallResponse>(
                     future: GetScheduleCall.call(),
                     builder: (context, snapshot) {
@@ -126,7 +202,7 @@ class _EventsListScreenWidgetState extends State<EventsListScreenWidget>
                             scrollDirection: Axis.vertical,
                             itemCount: event?.items.length,
                             itemBuilder: (context, eventIndex) {
-                              final Event? eventItem = event?.items[eventIndex];
+                              final eventItem = event?.items[eventIndex];
                               return Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 1.0),
@@ -139,8 +215,10 @@ class _EventsListScreenWidgetState extends State<EventsListScreenWidget>
                                     context.pushNamed(
                                       'EventDetailsScreen',
                                       queryParameters: {
-                                        'eventName': eventItem?.name
-                                      }.withoutNulls,
+                                        'eventName': eventItem?.name,
+                                        'eventDescription': eventItem?.description,
+                                        'tagsList': eventItem?.tags,
+                                      },
                                     );
                                   },
                                   child: Container(
@@ -164,58 +242,6 @@ class _EventsListScreenWidgetState extends State<EventsListScreenWidget>
                                         children: [
                                           Align(
                                             alignment:
-                                                AlignmentDirectional(-1.0, 0.0),
-                                            child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(8.0, 0.0, 0.0, 0.0),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.max,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Align(
-                                                    alignment:
-                                                        AlignmentDirectional(
-                                                            -1.0, 0.0),
-                                                    child: Text(
-                                                      eventItem?.name ?? "",
-                                                      style:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyLarge
-                                                              .override(
-                                                                fontFamily:
-                                                                    'Plus Jakarta Sans',
-                                                                color: Color(
-                                                                    0xFF14181B),
-                                                                fontSize: 16.0,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                              ),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                   eventItem?.location ?? "",
-                                                    style: FlutterFlowTheme.of(
-                                                            context)
-                                                        .labelMedium
-                                                        .override(
-                                                          fontFamily:
-                                                              'Plus Jakarta Sans',
-                                                          color:
-                                                              Color(0xFF57636C),
-                                                          fontSize: 14.0,
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                        ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Align(
-                                            alignment:
                                                 AlignmentDirectional(1.0, 0.0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
@@ -230,14 +256,16 @@ class _EventsListScreenWidgetState extends State<EventsListScreenWidget>
                                                           -1.0, 0.0),
                                                   child: Text(
                                                     eventItem?.from ?? "",
+                                                    textAlign: TextAlign.start,
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .bodyMedium
                                                         .override(
                                                           fontFamily:
                                                               'Plus Jakarta Sans',
-                                                          color:
-                                                              Color(0xFF4B39EF),
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primary,
                                                           fontSize: 14.0,
                                                           fontWeight:
                                                               FontWeight.normal,
@@ -250,15 +278,16 @@ class _EventsListScreenWidgetState extends State<EventsListScreenWidget>
                                                           -1.0, 0.0),
                                                   child: Text(
                                                     eventItem?.to ?? "",
-                                                    textAlign: TextAlign.center,
+                                                    textAlign: TextAlign.start,
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .bodyMedium
                                                         .override(
                                                           fontFamily:
                                                               'Plus Jakarta Sans',
-                                                          color:
-                                                              Color(0xFF4B39EF),
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primary,
                                                           fontSize: 14.0,
                                                           fontWeight:
                                                               FontWeight.normal,
@@ -268,22 +297,88 @@ class _EventsListScreenWidgetState extends State<EventsListScreenWidget>
                                               ],
                                             ),
                                           ),
-                                          Card(
-                                            clipBehavior:
-                                                Clip.antiAliasWithSaveLayer,
-                                            color: Color(0xFFF1F4F8),
-                                            elevation: 1.0,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(40.0),
+                                          Flexible(
+                                            child: Align(
+                                              alignment: AlignmentDirectional(
+                                                  -1.0, 0.0),
+                                              child: Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(
+                                                        24.0, 0.0, 0.0, 0.0),
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Align(
+                                                      alignment:
+                                                          AlignmentDirectional(
+                                                              -1.0, 0.0),
+                                                      child: Text(
+                                                        eventItem?.name ?? "",
+                                                        textAlign:
+                                                            TextAlign.start,
+                                                        style: FlutterFlowTheme
+                                                                .of(context)
+                                                            .bodyLarge
+                                                            .override(
+                                                              fontFamily:
+                                                                  'Plus Jakarta Sans',
+                                                              color: Color(
+                                                                  0xFF14181B),
+                                                              fontSize: 16.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      eventItem?.location ?? "",
+                                                      textAlign:
+                                                          TextAlign.start,
+                                                      style:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .labelMedium
+                                                              .override(
+                                                                fontFamily:
+                                                                    'Plus Jakarta Sans',
+                                                                color: Color(
+                                                                    0xFF57636C),
+                                                                fontSize: 14.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                              ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                             ),
-                                            child: Padding(
-                                              padding: EdgeInsets.all(4.0),
-                                              child: Icon(
-                                                Icons
-                                                    .keyboard_arrow_right_rounded,
-                                                color: Color(0xFF57636C),
-                                                size: 24.0,
+                                          ),
+                                          Padding(
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    12.0, 0.0, 0.0, 0.0),
+                                            child: Card(
+                                              clipBehavior:
+                                                  Clip.antiAliasWithSaveLayer,
+                                              color: Color(0xFFF1F4F8),
+                                              elevation: 1.0,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(40.0),
+                                              ),
+                                              child: Padding(
+                                                padding: EdgeInsets.all(4.0),
+                                                child: Icon(
+                                                  Icons
+                                                      .keyboard_arrow_right_rounded,
+                                                  color: Color(0xFF57636C),
+                                                  size: 24.0,
+                                                ),
                                               ),
                                             ),
                                           ),
